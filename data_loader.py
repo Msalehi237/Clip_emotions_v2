@@ -1,6 +1,7 @@
 from torch.utils.data import Dataset
 import torchvision.transforms as transforms
 from PIL import Image
+import PIL
 import os
 
 
@@ -13,11 +14,12 @@ class ImageDataSet(Dataset):
             for f in files:
                 fullpath = os.path.join(root, f)
                 try:
-                    if os.path.getsize(fullpath) < 100:
-                        os.remove(fullpath)
-                except WindowsError:
-                    print("Error" + fullpath)
+                    with Image.open(fullpath):
+                        continue
 
+                except PIL.UnidentifiedImageError:
+                    print("Error" + fullpath)
+                    os.remove(fullpath)
 
         self.total_imgs = os.listdir(main_dir)
 
